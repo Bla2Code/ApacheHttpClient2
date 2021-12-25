@@ -1,51 +1,52 @@
 package ru.coderiders;
 
 import org.apache.http.HttpEntity;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClients;
-import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 public class ApacheHttpClient {
 
-    public static void main(String[] args) throws IOException {
-        System.out.println("HI IT'S APACHE HTTP CLIENT");
+    public static void main2(String[] args) throws IOException {
+        System.out.println("HI IT'S APACHE HTTP CLIENT GET");
 
-        final CloseableHttpClient httpclient = HttpClients.createDefault();
+        final var closeableHttpClient = HttpClients.createDefault();
 
-        final HttpUriRequest httpGet = new HttpGet("http://jsonplaceholder.typicode.com/posts?_limit=10");
-        try (
-                CloseableHttpResponse response1 = httpclient.execute(httpGet)
-        ){
+        final HttpUriRequest httpGet = new HttpGet("https://api.challonge.com/v1/tournaments/10634350.json?api_key=C8Wqy2FysAowMwqUrjPHyJ11caLEpYzwSdLPKLaJ");
+        try (CloseableHttpResponse response1 = closeableHttpClient.execute(httpGet)) {
             final HttpEntity entity1 = response1.getEntity();
             System.out.println(EntityUtils.toString(entity1));
         }
 
-        final HttpPost httpPost = new HttpPost("http://jsonplaceholder.typicode.com/posts");
-        final List<NameValuePair> params = new ArrayList<>();
-        params.add(new BasicNameValuePair("title", "foo"));
-        params.add(new BasicNameValuePair("body", "bar"));
-        params.add(new BasicNameValuePair("userId", "1"));
-        httpPost.setEntity(new UrlEncodedFormEntity(params));
+    }
 
+    public static void main(String[] args) throws IOException {
+        System.out.println("HI IT'S APACHE HTTP CLIENT POST");
 
-        try (
-                CloseableHttpResponse response2 = httpclient.execute(httpPost)
-        ){
-            final HttpEntity entity2 = response2.getEntity();
-            System.out.println(EntityUtils.toString(entity2));
+        final var closeableHttpClient = HttpClients.createDefault();
+
+        final var httpPost = new HttpPost("https://api.challonge.com/v1/tournaments.json?api_key=C8Wqy2FysAowMwqUrjPHyJ11caLEpYzwSdLPKLaJ");
+
+        var jsonInputString = "{\n" +
+                "  \"tournament\": {\n" +
+                "    \"name\": \"Tournament #6\"\n" +
+                "  }\n" +
+                "}";
+
+        httpPost.setEntity(new StringEntity(jsonInputString));
+        httpPost.setHeader("Content-Type", "application/json; utf-8");
+
+        try (var response = closeableHttpClient.execute(httpPost)) {
+            final var httpEntity = response.getEntity();
+            System.out.println(EntityUtils.toString(httpEntity));
         }
-        httpclient.close();
 
+        closeableHttpClient.close();
     }
 }
