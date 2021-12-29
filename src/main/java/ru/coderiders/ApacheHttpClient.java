@@ -1,7 +1,6 @@
 package ru.coderiders;
 
 import org.apache.http.HttpEntity;
-import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
@@ -13,13 +12,15 @@ import java.io.IOException;
 
 public class ApacheHttpClient {
 
+    final static String API_KEY = "C8Wqy2FysAowMwqUrjPHyJ11caLEpYzwSdLPKLaJ";
+
     public static void main2(String[] args) throws IOException {
         System.out.println("HI IT'S APACHE HTTP CLIENT GET");
 
         final var closeableHttpClient = HttpClients.createDefault();
 
-        final HttpUriRequest httpGet = new HttpGet("https://api.challonge.com/v1/tournaments/10634350.json?api_key=C8Wqy2FysAowMwqUrjPHyJ11caLEpYzwSdLPKLaJ");
-        try (CloseableHttpResponse response1 = closeableHttpClient.execute(httpGet)) {
+        final HttpUriRequest httpGet = new HttpGet("https://api.challonge.com/v1/tournaments/10634350.json?api_key=" + API_KEY);
+        try (var response1 = closeableHttpClient.execute(httpGet)) {
             final HttpEntity entity1 = response1.getEntity();
             System.out.println(EntityUtils.toString(entity1));
         }
@@ -31,7 +32,7 @@ public class ApacheHttpClient {
 
         final var closeableHttpClient = HttpClients.createDefault();
 
-        final var httpPost = new HttpPost("https://api.challonge.com/v1/tournaments.json?api_key=C8Wqy2FysAowMwqUrjPHyJ11caLEpYzwSdLPKLaJ");
+        final var httpPost = new HttpPost("https://api.challonge.com/v1/tournaments.json?api_key=" + API_KEY);
 
         var jsonInputString = "{\n" +
                 "  \"tournament\": {\n" +
